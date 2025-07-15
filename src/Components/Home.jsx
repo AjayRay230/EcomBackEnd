@@ -2,9 +2,10 @@ import { useContext,useEffect,useState } from "react";
 import axios from "axios"
 import MyContext from "../Context/Context"
 import {Link} from "react-router-dom"
+import unplugged from "../assets/unplugged.png"
 const Home = ({selectedCategory}) =>
 {
-    const {data, isError, refreshData} = useContext(MyContext);
+    const {data, isError, refreshData,AddToCart} = useContext(MyContext);
     const[isDataFetched,setIsDataFetched] = useState(false);
     const[products,setProducts] = useState([])
      useEffect(() => {
@@ -26,15 +27,15 @@ const Home = ({selectedCategory}) =>
 
 // Attach that image URL to the product.
       const fetchImageAndUpdateProducts = async () => {
-        const updatedPoducts = await Promise.all(data.map(async (products )=>{
+        const updatedPoducts = await Promise.all(data.map(async (product )=>{
           try{
-            const response = await axios.get(`/product/${product.id}/image`,{responseType:"blob"});
+            const response = await axios.get(`http://localhost:8080/api/product/${product.id}/image`,{responseType:"blob"});
             const imageUrl = URL.createObjectURL(response.data);
-            return {...products ,imageUrl};
+            return {...product ,imageUrl};
           }
           catch(error){
-            console.log("Error while fetching the image  for product ID :",products.id,error );
-            return {...products,imageUrl:"placeholder-image-url"};
+            console.log("Error while fetching the image  for product ID :",product.id,error );
+            return {...product,imageUrl:"placeholder-image-url"};
           }
         }))
         //After all images are fetched, it updates the products state with
@@ -57,11 +58,13 @@ const Home = ({selectedCategory}) =>
    product.category === selectedCategory):products;
 
   if (isError) {
-    return (
-      <h2 className="text-center" style={{ padding: "10rem" }}>
-        Something went wrong...
+    
+     return (
+      <h2 className="text-center" style={{ padding: "18rem" }}>
+      <img src={unplugged} alt="Error" style={{ width: '100px', height: '100px' }}/>
       </h2>
     );
+    
   }
     return (
         <>
@@ -79,7 +82,7 @@ const Home = ({selectedCategory}) =>
                 <h2>No Products Available</h2>
               ):(
                 filteredProducts.map((products)=>{
-                  const{id,brand,name,price,productAvailabel,imageUrl} = 
+                  const{id,brand,name,price,available,imageUrl} = 
                   product;
                   
                 })
@@ -90,16 +93,25 @@ const Home = ({selectedCategory}) =>
                 style = {{}}
                 
                 >
-                  <img
-                  src = {product.imageUrl}
-                  alt = {product.name}
-                  />
-                    <div
+                  <div
                     
                      className=" card-body"
                      style={{}}
                     
                     >
+                  <img
+                  src = {product.imageUrl}
+                  alt = {product.name}
+                  style={{
+                      width: "100%",
+                      height: "150px", 
+                      objectFit: "cover",  
+                      padding: "5px",
+                      margin: "0",
+                      borderRadius: "10px 10px 10px 10px", 
+                    }}
+                  />
+                    
                         <div>
                             <h5  className=" card-name">{product.name.toUpperCase()}</h5>
                             
@@ -124,7 +136,7 @@ const Home = ({selectedCategory}) =>
                             >
 
 
-                               {product.availabel?"Add to cart":"Out of Stock"}
+                               {product.available?"Add to cart":"Out of Stock"}
                             </button>
                         </div>
 

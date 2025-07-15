@@ -1,6 +1,6 @@
 body{
    color: #333333;         
-  background-color: #ffffff;
+ 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .header{
@@ -137,15 +137,15 @@ a:hover{
 .grid{
   text-align: center;
   
-  display: inline-flexbox;
+  display: flex;
   margin-top: 100px;
   margin-bottom: 20px;
   text-decoration: none;
+  min-height: 100vh;
 }
 
 .card{
-  width: 170px;
-  height: 170px;
+  height:40vh;
   text-align: center;
   display: inline-block;
   
@@ -165,18 +165,18 @@ a:hover{
   margin-top:0px;
 }
 .card-brand{
-  margin-left:4px;
+  margin-left:2px;
     color: #1a1a1a;
 }
 .brand-tag{
-  margin-left: 4px;;
+  margin-left: 2px;;
  }
  .btn{
   background-color: #1976d2;
   color:white;
   border:none;
   border-radius: 6px;
-  padding:10px 20px;
+  
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
@@ -189,16 +189,23 @@ a:hover{
     color: #1a1a1a;
  }
  .product-card{
-  align-items: center;
-  margin-left:400px;
-  margin-top:50px;
-  display: inline-block;
-  justify-content: flex;
+  align-items: flex-start;
+  
+  display: flex;
+  padding: 20px;
+  gap:40px;
   
  }
+ .product-image img{
+  width:300px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0,0 ,0,0.1);
+ }
  .column{
-  display: block;
-  justify-self: center;
+  flex:1;
+  
+  font-family: sans-serif;
 
  }
  .product-description{
@@ -232,3 +239,114 @@ text-align: block;
   background-color: #1976d2;
   
  }
+ .cart-container{
+  
+   padding:40px 60px;
+  margin:100px;
+ }
+ .shopping-cart{
+  display: inline-block;
+  justify-content: space-between;
+  align-items: center;
+  display: center;
+  font-weight: bolder;
+  
+  
+ }
+ .title{
+  margin-bottom:40x;
+  color:#333333;
+
+ }
+ .total{
+  text-align: center;
+  margin-top:20px;
+  margin-bottom:20px;
+ }
+ .checkout-btn{
+  background-color: #1976d2;
+  cursor: pointer;
+ }
+.container{
+  min-height: 100vh;
+  display: flex;
+ justify-content: center;
+ align-items: center;
+ 
+  padding:40px 20px;
+  
+  
+  background-color: #f4f4f4;
+  
+  overflow-y: auto;
+}
+.form{
+  width:100%;
+  max-width: 600px;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+
+}
+.form label{
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color:#888;
+}
+.form input, .form select{
+ width:100%;
+ padding: 10px 12px;
+ margin-bottom: 18px;
+ border: 1px solid #ccc;
+ border-radius: 6px;
+ font-size: 14px;
+
+}
+.form input[type = "checkbox"]
+{
+ height:20px;
+ width:20px;
+  padding:10px;
+}
+.container input::placeholder{
+  color:#888;
+}
+.check-div{
+  display: inline-flex;
+  justify-content: space-between;
+
+}
+.availabel-label{
+  margin-right:10px;
+}
+.submit-div{
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.submit-btn{
+  
+  background-color: #007bff;
+  margin-top: 15px;
+  cursor: pointer;
+  
+
+}
+.submit-btn:hover{
+  background-color: #0056b3;
+}
+.text-center{
+  margin-left: 400px;
+  margin-top: 100px;
+  text-align: center;
+  display: block;
+
+}
+.card-body img{
+  height:70px;
+
+
+}
+

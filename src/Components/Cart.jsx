@@ -16,14 +16,15 @@ const fetchImagesAndUpdateCart = async()=>{
     // for debugging purpose
     console.log("cart",cart);
     try{
-        const response = await axios.get(`http://localhost:8080/api/product/${item.id}/image`,{responseType:"blob"});
+        const response = await axios.get(`http://localhost:8080/api/product`);
         const backEndProductId = response.data.map((product)=>product.id);
         const updatedCartItems = cart.filter((item)=>backEndProductId.includes(item.id));
         const cartItemsWithImages = await Promise.all(
             updatedCartItems.map(async (item)=>
             {
                 try{
-                    const response  = await axios.get('http://localhost:8080/api/product/${item.id}/image',{responseType:"blob"});
+                    const response = await axios.get(`http://localhost:8080/api/product/${item.id}/image`, 
+                        {responseType:"blob"});
                     const imageFile = await convertUrlToFile(response.data,response.data.imageName);
                     setCartImage(imageFile);
                     const imageUrl = URL.createObjectURL(response.data);
@@ -147,12 +148,12 @@ const handleCheckOut = async()=>
             <div className="shopping-cart">
                 <div className="title">Shopping Bag</div>
                 
-                {cartItems.length===0}?(<div className="empty">
+                {cartItems.length===0?(<div className="empty">
                     
                     <h4>Cart is Empty</h4>
                     
-                    </div>):
-                        (
+                    </div>
+                ):(
                             <>
                             
                             {cartItems.map((items)=>{
@@ -175,21 +176,21 @@ const handleCheckOut = async()=>
 
                                         </button>
 
-                                        
+                                    
 
                                     </div>
                                 </div>
 
-                            })}
+                    })}
                             <div className="total">Total:${totalPrice}</div>
-                            <button onClick={()=>setShowModal(true)}>
+                            <button className="checkout-btn" onClick={()=>setShowModal(true)}>
                                 CheckOut
                             </button>
                             
                             </>
-                        )
+)}
 
-            </div>
+              </div>
             <CheckOutPop
             show = {showModal}
             handleClose={()=>setShowModal(false)}

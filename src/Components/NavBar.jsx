@@ -42,7 +42,7 @@ function NavBar({onSelectedCategory,onSearch}){
                 setShowSearchResults(true);
             
             try{
-                const response = await axios.get(`http://localhost:8080/api/product/search?keyword = ${value}`);
+                const response = await axios.get(`http://localhost:8080/api/product/search?keyword=${value}`);
                 setSearchResults(response.data);
                 setNoResults(response.data.length===0);
 

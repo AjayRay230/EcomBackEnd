@@ -6,8 +6,9 @@ import AddProduct   from "./Components/AddProduct.jsx";
 import CART from "./Components/Cart.jsx"
 import Product from "./Components/Product.jsx"
 import {AppContextProvider} from "./Context/Context"
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter , Routes, Route } from "react-router-dom";
 import Home from "./Components/Home.jsx"
+import UpdateProduct from './Components/UpdateProduct.jsx';
 function App() {
   const [cart,setCart] = useState([])
   const[selectedCategory,setSelectedCategory] = useState("")
@@ -45,10 +46,11 @@ const AddtoCart=(product)=>{
           <Home AddToCart = {AddtoCart} selectedCategory = {selectedCategory}/>
         }
        />
-        <Route path = "/add-Product" element= {<AddProduct/>}/>
+        <Route path = "/add_product" element= {<AddProduct/>}/>
         <Route path="/product" element={<Product  />} />
         <Route path="product/:id" element={<Product  />} />
         <Route path = "/Cart" element = {<CART/>}/>
+         <Route path="/product/update/:id" element={<UpdateProduct />} />
         </Routes>
        
        

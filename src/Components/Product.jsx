@@ -17,16 +17,29 @@ function Product(){
     const navigate = useNavigate();
     
     useEffect( ()=>{
-        const fectchProduct= async ()=>{
+        // Fetches the product image as a binary blob.
+
+// Converts that blob into a temporary URL using URL.createObjectURL().
+
+// Updates imageUrl state so you can show the image (e.g., in an <img> tag).
+        const fetchImage = async()=>
+    {
+        try{
+        const response = await axios.get(`http://localhost:8080/api/product/${id}/image`, {responseType:"blob"});
+        setImageUrl(URL.createObjectURL(response.data));
+        }
+        catch(error)
+        {
+            console.log("Error while fetching image: ",error);
+            alert("Error while fetching image");
+        }
+    };
+        const fetchProduct= async ()=>{
             try{
                // Makes an API request to get the product by its id.
-
-
-
-
             const response = await axios.get(`http://localhost:8080/api/product/${id}`);
- //Stores the product data in the state with setProduct.
-            setProduct(response.data);
+            //Stores the product data in the state with setProduct.
+           setProduct(response.data);
             if(response.data.imageName)
             {
                 fetchImage();
@@ -37,17 +50,8 @@ function Product(){
                 console.error("error while fetching product",error);
             }
         };
-// Fetches the product image as a binary blob.
 
-// Converts that blob into a temporary URL using URL.createObjectURL().
-
-// Updates imageUrl state so you can show the image (e.g., in an <img> tag).
-        const fetchImage = async()=>
-    {
-        const response = await axios.get(`http://localhost:8080/api/product/${id}/image`, {responseType:"bolb"});
-        setImageUrl(URL.createObjectURL(response.data));
-    };
-        fectchProduct();
+        fetchProduct();
     },[id]);// id here makes the component run only once every time the id changes or comp mounts
 
     
@@ -85,11 +89,13 @@ function Product(){
     }
     return(
         <div className="product-card">
+            <div className="product-image">
         <img 
         className="column -img"
-        src = {product.imageUrl}
+        src = {imageUrl}
         alt  = {product.imageName}
-        />
+        
+        /></div>
             <div className="column">
                 <div className="product-description">
                     <h2>{product.category}</h2>
@@ -109,7 +115,7 @@ function Product(){
                     <span>$ {product.price}</span>
                     <div className="add-to-cart-btn"></div>
                     <button
-                     className={`cart-btn ${!product.available? "disable-btn" :" "}`}
+                     className={`cart-btn ${!product.available? "disable-btn" :""}`}
                      onClick = {handleAddToCart}
                      disabled = {!product.available}
                     >

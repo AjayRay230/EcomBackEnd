@@ -1,56 +1,83 @@
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import axios from "axios";
-import {useState}  from "react";
-const AddProduct = ()=>{
-const[product,setProduct] = useState({
-    name: "",
-    brand: "",
-    description: "",
-    price: "",
-    category: "",
-    quantity: "",
-    releaseDate: "",
-    available: false,
-});
-const[image,setImage] = useState(null);
-const handleInputChange = (e)=>
-{
-    const{name,value,type,checked} = e.target;
-    setProduct((prev)=>({...prev,[name]:type==="checkbox"?checked:value,}));
-}
-const handleImageChange = (e)=>
-{
-    setImage(e.target.files[0]);
-}
-const handleSubmit = (event) => {
-  event.preventDefault();
-  const formData = new FormData();
-  formData.append("imageFile", image);
-  formData.append(
-    "product",
-    new Blob([JSON.stringify(product)], { type: "application/json" })
-  );
-
-  axios
-    .post("http://localhost:8080/api/product", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data", 
-      },
-    })
-    .then((response) => {
-      console.log("Product added successfully:", response.data);  
-      alert("Product added successfully");
-    })
-    .catch((error) => {
-      console.error("Error while adding the product:", error);
-      alert("Error adding product");
+import { useState,useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios"
+const updateProduct = ()=>{
+    const{id}  = useParams();
+    const[product,setProduct] = useState({});
+    const[image,setImage] = useState();
+    const[updateProduct,setUpdateProduct] = useState({
+        id :null,
+        name:"",
+        description:"",
+        brand:"",
+        price:"",
+        category:"",
+        releaseDate:"",
+        available:"",
+        quantity:""
     });
-};
+    useEffect(()=>{
+    const fetchProduct = async()=>
+    {
+        try{
+            const response = await axios.get(`http://localhost:8080/api/product/${id}`);
+            setProduct(response.data);
+            const responseImage = await axios.get(`http://localhost:8080/api/product/${id}/image`,{responseType:"blob"});
+           // Converts the image blob to a File object using a custom utility function.
+            const imageFile  = await convertUrlToFile(responseImage.data,response.data.imageName);
+            setImage(imageFile);
+            setUpdateProduct(response.data);
 
-    return (
-        
-        <div className="master-container">
+        }
+        catch(error)
+        {
+            console.error("error while fetching the product",error);
+        }
+    }
+    fetchProduct();
+}
+
+   ,[id] );
+
+//    useEffect(()=>
+// {
+//     console.log("image updated",image);
+// },[image]);
+const convertUrlToFile = async(blobData,fileName)=>{
+    const file   = new File([blobData],fileName,{type:blobData.type});
+    return file;
+}
+ const handleSubmit = async(e)=>{
+    e.preventDefault();
+    const updatedProduct = new FormData();
+    updatedProduct.append("imageFile",image);
+    updatedProduct.append("product",
+        new Blob([JSON.stringify(updateProduct)],{type:"application/json"})
+    )
+    axios.put(`http://localhost:8080/api/product/${id}`,updatedProduct,{
+        headers:{
+            "Content-Type":"multipart/form-data",
+        }
+    })
+    .then((response)=>{
+        console.log("product updated successfully",updatedProduct)
+        alert("product updated successfully!");
+    }).catch((error)=>
+    {
+        console.error("Error while updating product",error);
+        alert("Failed to update product.Please try again");
+    })
+ };
+ const handleChange = (e)=>{
+    const{name,value,type,checked}= e.target;
+    setUpdateProduct({
+        ...updateProduct,[name]:type === "checkbox"?checked:value,
+    });
+ };
+ const handleImageChange = (e)=>setImage(e.target.files[0]);
+ 
+ return (
+     <div className="master-container">
             <div className="container">
                 <form className="form" onSubmit={handleSubmit}>
                     <div className="name-div">
@@ -61,8 +88,8 @@ const handleSubmit = (event) => {
                         className="name"
                         type = "text"
                         placeholder="product name"
-                        onChange={handleInputChange}
-                        value={product.name}
+                        onChange={handleChange}
+                        value={updateProduct.name}
                         name = "name"/>
                     </div>
                     <div className="brand-div">
@@ -73,8 +100,9 @@ const handleSubmit = (event) => {
                         type = "text"
                         placeholder="name of brand"
                         name = "brand"
-                        onChange={handleInputChange}
-                        value = {product.brand}
+                        onChange={handleChange}
+                        value = {updateProduct.brand}
+                        id = "brand"
                         />
                     </div>
                     <div className="description-div">
@@ -83,11 +111,12 @@ const handleSubmit = (event) => {
 
                         </label>
                         <input 
-                        value = {product.description}
+                        value = {updateProduct.description}
                         type = "text"
                         name = "description"
-                        onChange={handleInputChange}
+                        onChange={handleChange}
                         placeholder="Description of Product"
+                        id = "description"
                         />
                     </div>
                     <div className="price-div">
@@ -95,10 +124,12 @@ const handleSubmit = (event) => {
                             <h6>Price</h6>
                         </label>
                         <input type = "number"
-                        value = {product.price}
+                        value = {updateProduct.price}
                         name = "price"
-                        onChange={handleInputChange}
-                        placeholder="Eg:$1000"/>
+                        onChange={handleChange}
+                        placeholder="Eg:$1000"
+                        id = "price"
+                        />
                     </div>
                     <div className="category-div">
                         <label className="category-label">
@@ -107,9 +138,11 @@ const handleSubmit = (event) => {
                         </label>
                         <select 
                         name = "category"
-                         value = {product.category}
-                         onChange={handleInputChange}
-                         className="select">
+                         value = {updateProduct.category}
+                         onChange={handleChange}
+                         className="select"
+                          id = "category"
+                         >
                             <option value = "">Select Category</option>
                             <option value = "Laptop">Laptop</option>
                             <option value = "Cloths">Cloths</option>
@@ -125,11 +158,13 @@ const handleSubmit = (event) => {
                             <h6>Stock Quantity</h6>
 
                         </label>
-                        <input value = {product.quantity}
-                        onChange={handleInputChange}
+                        <input value = {updateProduct.quantity}
+                        onChange={handleChange}
                         type = "number"
                         name = "quantity"
-                        placeholder="Product Quantity"/>
+                        placeholder="Product Quantity"
+                         id = "quantity"
+                        />
 
                     </div>
                     <div className="release-div">
@@ -139,10 +174,10 @@ const handleSubmit = (event) => {
                         <input
                                 type="date"
                                 name="releaseDate"
-                                value={product.releaseDate ? product.releaseDate : ""}  
+                                value={updateProduct.releaseDate ? updateProduct.releaseDate : ""}  
                                 onChange={(e) =>
-                                    setProduct({
-                                    ...product,
+                                    setUpdateProduct({
+                                    ...updateProduct,
                                     releaseDate: e.target.value, 
                                     })
                                 }
@@ -153,7 +188,7 @@ const handleSubmit = (event) => {
                         <label className="image-label">
                              <img
                                 src={image ? URL.createObjectURL(image) : "Image unavailable"}
-                                alt={product.imageName}
+                                alt={updateProduct.imageName}
                                 style={{
                                     width: "100%",
                                     height: "180px",
@@ -175,9 +210,9 @@ const handleSubmit = (event) => {
                         <input type = "checkbox"
                         className="checkbox"
                         name = "available"
-                        checked = {product.available}
+                        checked = {updateProduct.available}
                         onChange={(e)=>{
-                            setProduct({...product,available:e.target.checked})
+                            setProduct({...updateProduct,available:e.target.checked})
                         }}
                         />
                         
@@ -185,13 +220,14 @@ const handleSubmit = (event) => {
                     <div className="submit-div">
                         <button className="submit-btn"
                         type="button"
-                        onClick={handleSubmit}
+                        
                         > Submit</button>
                     </div>
                 </form>
             </div>
             </div>
-        
-    )
- }
- export  default AddProduct
+ )
+
+
+}
+export default updateProduct;
